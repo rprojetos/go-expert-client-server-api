@@ -1,8 +1,9 @@
 # go-expert-client-server-api
 
-## Desafio:
-Consiste na aplicação de conhecimentos sobre webserver http, contextos,
-banco de dados e manipulação de arquivos com Go.
+## Desafio / Resumo da implementação:
+Este desafio consiste no desenvolvimento de duas aplicações relativas a server/client
+Sendo o client responsavel por buscar no servidor a cotação atual do dolar salvando esta em um arquivo de texto.
+O servidor é responsável por buscar a cotação em uma api externa, persistindo a respctiva consulta em um bando de dados sqlite.
 
 ## Tópicos de abrangência:
 
