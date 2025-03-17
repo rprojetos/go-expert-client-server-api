@@ -11,8 +11,7 @@ banco de dados e manipulação de arquivos com Go.
 - banco de dados
 - manipulação de arquivos
 
-## Desafio:
-Criação de dois sistemas em Go:
+## Sistemas criados para o desafio:
 - server.go
 - client.go
 
