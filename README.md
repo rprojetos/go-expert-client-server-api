@@ -13,8 +13,8 @@ banco de dados e manipulação de arquivos com Go.
 
 ## Desafio:
 Criação de dois sistemas em Go:
-- client.go
 - server.go
+- client.go
 
 ## Requisitos do server.go:
 - Endereço do servidor / endpoint para cotação do dólar:
