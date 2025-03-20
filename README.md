@@ -1,5 +1,9 @@
 # go-expert-client-server-api
 
+## Comando uteis:
+- go work init
+
+
 ## Desafio / Resumo da implementação:
 Este desafio consiste no desenvolvimento de duas aplicações relativas a server/client
 Sendo o client responsavel por buscar no servidor a cotação atual do dolar salvando esta em um arquivo de texto.
