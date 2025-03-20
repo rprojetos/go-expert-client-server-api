@@ -16,6 +16,6 @@ func main() {
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
-	// post ...
+	// TODO post ...
 	// curl -X POST -H "Content-Type: application/json" -d '{"moeda":"EUR-BRL"}' http://localhost:8080/cotacao
 }
