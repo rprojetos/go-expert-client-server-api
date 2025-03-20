@@ -7,16 +7,23 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/rprojetos/go-expert/internal/config"
 )
 
 func ObterCotacaoDolar() ([]byte, error) {
 
-	apiURL := "https://economia.awesomeapi.com.br/json/last/USD-BRL"
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		return nil, err
+	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+	timeQuoteApi := cfg.Context.Timeout.TimeQuoteApi
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeQuoteApi)*time.Millisecond)
 	defer cancel()
-
-	req, err := http.NewRequestWithContext(ctx, "GET", apiURL, nil)
+	
+	req, err := http.NewRequestWithContext(ctx, "GET", cfg.QuoteApiUrl, nil)
 	if err != nil {
 		return nil, fmt.Errorf("erro ao criar requisição: %v", err)
 	}
@@ -26,7 +33,7 @@ func ObterCotacaoDolar() ([]byte, error) {
 	resp, err := client.Do(req)
 	if err != nil {
 		if ctx.Err() == context.DeadlineExceeded {
-			log.Printf("ERRO: Timeout ao chamar API de cotação - limite de 200ms excedido")
+			log.Printf("ERRO: Timeout ao chamar API de cotação - limite de %dms excedido", timeQuoteApi)
 			return nil, fmt.Errorf("timeout ao obter cotação do dólar")
 		}
 		return nil, fmt.Errorf("erro ao chamar API de cotação: %v", err)

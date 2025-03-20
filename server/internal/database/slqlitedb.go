@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/rprojetos/go-expert/internal/config"
 	_ "modernc.org/sqlite"
 )
 
@@ -27,62 +28,7 @@ type Resultado struct {
 	} `json:"USDBRL"`
 }
 
-// createTableCotacoes cria a tabela "cotacoes" e aguarda até 200ms para garantir que esteja disponível.
-func createTableIfNotExistsCotacoes(db *sql.DB) error {
-	// Criando a tabela se não existir
-	createTableQuery := `
-        CREATE TABLE IF NOT EXISTS cotacoes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        code TEXT,
-        codein TEXT,
-        name TEXT,
-        high TEXT,
-        low TEXT,
-        var_bid TEXT,
-        pct_change TEXT,
-        bid TEXT,
-        ask TEXT,
-        timestamp TEXT,
-        create_date TEXT,
-        data_consulta DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`
-	
-	_, err := db.Exec(createTableQuery)
-	if err != nil {
-		return fmt.Errorf("erro ao criar tabela: %v", err)
-	}
-	fmt.Println("Comando de criação da tabela enviado.")
-
-	// Aguarda até que a tabela esteja disponível (máx. 200ms)
-	maxWait := 200 * time.Millisecond
-	interval := 50 * time.Millisecond
-	startTime := time.Now()
-
-	for {
-		if tableExists(db, "cotacoes") {
-			fmt.Println("Tabela criada com sucesso!")
-			return nil // Sucesso
-		}
-
-		// Se ultrapassar o tempo máximo, retorna erro
-		if time.Since(startTime) > maxWait {
-			return fmt.Errorf("tempo limite atingido, a tabela pode não ter sido criada corretamente")
-		}
-
-		time.Sleep(interval) // Aguarda 50ms antes de tentar novamente
-	}
-}
-
-// tableExists verifica se uma tabela existe no banco de dados SQLite
-func tableExists(db *sql.DB, tableName string) bool {
-	query := "SELECT name FROM sqlite_master WHERE type='table' AND name=?"
-	var name string
-	err := db.QueryRow(query, tableName).Scan(&name)
-
-	return err == nil
-}
-
-func parseJsonCotacao(dadosCotacao []byte, resultado *Resultado) (*Resultado, error){
+func parseJsonCotacao(dadosCotacao []byte, resultado *Resultado) (*Resultado, error) {
 	if err := json.Unmarshal(dadosCotacao, &resultado); err != nil {
 		return nil, fmt.Errorf("erro ao processar dados para salvar: %v", err)
 	}
@@ -90,11 +36,13 @@ func parseJsonCotacao(dadosCotacao []byte, resultado *Resultado) (*Resultado, er
 }
 
 func SaveDadosCotacao(dadosCotacao []byte) error {
-	// TODO deletar o startTime e o endTime
 	startTime := time.Now()
-	// Cria um contexto com timeout de 10 milissegundos
-	// TODO analisar tempo de 10 mS
-	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		return err
+	}
+	timeDbSqlite := cfg.Context.Timeout.TimeDbSqlite
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeDbSqlite)*time.Millisecond)
 	defer cancel() // Garante que os recursos sejam liberados quando a função retornar
 	// Abre conexão com o banco SQLite
 	db, err := sql.Open("sqlite", "data/finance.db")
@@ -103,19 +51,13 @@ func SaveDadosCotacao(dadosCotacao []byte) error {
 	}
 	defer db.Close()
 
-	if !tableExists(db, "cotacoes") {
-		err := createTableIfNotExistsCotacoes(db)
-		if err != nil {
-			return fmt.Errorf("erro ao preparar statement: %v", err)
-		}
-	}
-
 	// Prepara a statement usando o contexto com timeout
 	stmt, err := db.PrepareContext(ctx, `INSERT INTO cotacoes (
         code, codein, name, high, low, var_bid, pct_change, bid, ask, timestamp, create_date
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
-		return fmt.Errorf("erro ao preparar statement: %v", err)
+		fmt.Println("Erro ao preparar statement")
+		return err
 	}
 	defer stmt.Close()
 
@@ -138,13 +80,13 @@ func SaveDadosCotacao(dadosCotacao []byte) error {
 		resultado.USDBRL.CreateDate,
 	)
 	if err != nil {
-		return fmt.Errorf("erro ao inserir dados: %v", err)
+		fmt.Println("Erro ao inserir dados.")
+		return err
 	}
 
 	endTime := time.Now()
-
 	elapsed := endTime.Sub(startTime)
-	fmt.Println("Tempo de execução:", elapsed)
+	fmt.Println("Tempo de persistência no db:", elapsed)
 
 	return nil
 }

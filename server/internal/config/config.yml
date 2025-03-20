@@ -1,0 +1,5 @@
+quoteApiUrl: "https://economia.awesomeapi.com.br/json/last/USD-BRL"
+context:
+  timeout:
+    timeQuoteApi: 200
+    timeDbSqlite: 100
