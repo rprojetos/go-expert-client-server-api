@@ -1,0 +1,6 @@
+cotacao:
+  url: "http://localhost:8080/cotacao"
+  pathFileName: "data/cotacao.txt"
+context:
+  timeout:
+    timeResponseApi: 300

@@ -9,11 +9,13 @@ import (
 
 // Estrutura para armazenar as configurações do arquivo YAML
 type Config struct {
-	QuoteApiUrl string `yaml:"quoteApiUrl"`
-	Context     struct {
+	Cotacao struct {
+		Url string `yaml:"url"`
+		PathFileName string `yaml:"pathFileName"`
+	} `yaml:"cotacao"`
+	Context struct {
 		Timeout struct {
-			TimeQuoteApi int `yaml:"timeQuoteApi"`
-			TimeDbSqlite int `yaml:"timeDbSqlite"`
+			TimeResponseApi int `yaml:"timeResponseApi"`
 		} `yaml:"timeout"`
 	} `yaml:"context"`
 }

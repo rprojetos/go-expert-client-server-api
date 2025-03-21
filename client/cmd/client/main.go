@@ -3,49 +3,41 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"os"
 	"time"
+
+	"github.com/rprojetos/go-expertt/client/internal/config"
+	"github.com/rprojetos/go-expertt/client/pkg/fileutil"
 )
 
-
-func writeFileString(pathFileName string, content string) int {
-	// Abrindo o arquivo com permissão de escrita e criação, se necessário
-	// f, err := os.OpenFile(pathFileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-	f, err := os.OpenFile(pathFileName, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
-	// Escrevendo uma string no arquivo e pegando o tamanho
-	fileSize, err := f.WriteString(content)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Escrita realizada com sucesso no arquivo", f.Name())
-	return fileSize
-}
 
 func main() {
 	fmt.Println("Sistema iniciado com sucesso!")
 	fmt.Println("Iniciando servidor HTTP...")
+
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		// log.Fatalf("Erro no carregamento das configurações: %v", err)
+		log.Panicf("Erro no carregamento das configurações: %v", err)
+	}
 
 	startTime := time.Now()
 
 	// Cliente HTTP com timeout global de 1 segundo (GuardRail)
 	c := http.Client{Timeout: 1 * time.Second}
 
-	jsonData := []byte(`{"moeda":"EUR-BRL"}`)
-	url := "http://localhost:8080/cotacao"
+	timeResponseApi := cfg.Context.Timeout.TimeResponseApi
 
 	// Cria um contexto com timeout de 300ms
-	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeResponseApi)*time.Millisecond)
 	defer cancel() // Libera recursos assim que a função main retornar
+
+	jsonData := []byte(`{"moeda":"EUR-BRL"}`)
+	url := cfg.Cotacao.Url
 
 	// Cria a requisição com o contexto
 	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
@@ -69,9 +61,19 @@ func main() {
 		log.Fatalf("Erro ao ler a resposta: %v", err)
 	}
 
-	log.Println("Resposta do servidor:", string(body))
+	var resultado struct {
+		Bid string `json:"bid"`
+	}
 
-	fileSize := writeFileString("cotacao.txt", fmt.Sprintf("Dólar: %s", string(body)))
+	// Faz o parse do JSON
+	if err := json.Unmarshal(body, &resultado); err != nil {
+		log.Fatalf("Erro ao processar dados: %v", err)
+	}
+
+	log.Println("Resposta do servidor:", resultado.Bid)
+
+	pathFileName := cfg.Cotacao.PathFileName
+	fileSize := fileutil.WriteFileString(pathFileName, fmt.Sprintf("Dólar: %s\n", resultado.Bid))
 	fmt.Printf("Tamanho do arquivo: %d bytes\n", fileSize)
 
 	endTime := time.Now()

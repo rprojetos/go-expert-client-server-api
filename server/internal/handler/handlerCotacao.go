@@ -34,7 +34,7 @@ func HandlerCotacaoDolar(w http.ResponseWriter, r *http.Request) {
 		if err == context.DeadlineExceeded {
 			cfg, err := config.LoadConfig()
 			if err != nil {
-				fmt.Println("Erro ao ler configuração de timeout do db %v", err)
+				fmt.Printf("Erro ao ler configuração de timeout do db %v\n", err)
 			}
 			timeDbSqlite := cfg.Context.Timeout.TimeDbSqlite
 			log.Printf("ERRO: Timeout na realização de persistência de dados - limite de %dms excedido", timeDbSqlite)
