@@ -14,19 +14,15 @@ import (
 	"github.com/rprojetos/go-expertt/client/pkg/fileutil"
 )
 
-
-func main() {
-	fmt.Println("Sistema iniciado com sucesso!")
-	fmt.Println("Iniciando servidor HTTP...")
-
+func loadConfig() (config.Config, error){
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		// log.Fatalf("Erro no carregamento das configurações: %v", err)
-		log.Panicf("Erro no carregamento das configurações: %v", err)
+		return cfg, err
 	}
+	return cfg, nil
+}
 
-	startTime := time.Now()
-
+func fetchCotacao(cfg config.Config) ([]byte, error){
 	// Cliente HTTP com timeout global de 1 segundo (GuardRail)
 	c := http.Client{Timeout: 1 * time.Second}
 
@@ -42,7 +38,7 @@ func main() {
 	// Cria a requisição com o contexto
 	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
-		log.Fatalf("Erro ao criar a requisição: %v", err)
+		return nil, fmt.Errorf("erro ao criar requisição: %w", err)
 	}
 
 	// Define o header Content-Type
@@ -51,32 +47,73 @@ func main() {
 	// Executa a requisição
 	resp, err := c.Do(req)
 	if err != nil {
-		log.Fatalf("Erro ao fazer a requisição: %v", err)
+		return nil, fmt.Errorf("erro ao fazer a requisição: %w", err)
 	}
 	defer resp.Body.Close()
 
 	log.Println("Status da resposta:", resp.Status)
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalf("Erro ao ler a resposta: %v", err)
+		return nil, fmt.Errorf("erro ao ler a resposta: %w", err)
 	}
 
+	return body, nil
+}
+
+func saveResult(cfg config.Config, result []byte) error {
 	var resultado struct {
 		Bid string `json:"bid"`
 	}
 
 	// Faz o parse do JSON
-	if err := json.Unmarshal(body, &resultado); err != nil {
-		log.Fatalf("Erro ao processar dados: %v", err)
+	if err := json.Unmarshal(result, &resultado); err != nil {
+		return fmt.Errorf("erro ao processar dados: %w", err)
 	}
 
-	log.Println("Resposta do servidor:", resultado.Bid)
+	log.Println("Valor do BID:", resultado.Bid)
 
 	pathFileName := cfg.Cotacao.PathFileName
-	fileSize := fileutil.WriteFileString(pathFileName, fmt.Sprintf("Dólar: %s\n", resultado.Bid))
-	fmt.Printf("Tamanho do arquivo: %d bytes\n", fileSize)
+	fileSize, err := fileutil.WriteFileString(pathFileName, fmt.Sprintf("Dólar: %s\n", resultado.Bid))
+	log.Printf("Tamanho do arquivo: %s >> %d bytes\n", pathFileName, fileSize)
+	if err != nil {
+		return fmt.Errorf("erro ao processar dados: %w", err)
+	}
+	return nil
+}
 
+func logExecutionTime(startTime time.Time) {
 	endTime := time.Now()
 	elapsed := endTime.Sub(startTime)
-	fmt.Println("Tempo total de execução/resposta:", elapsed)
+	log.Println("Tempo total de execução/resposta:", elapsed)
+}
+
+func RunQuotesClient (cfg config.Config) {
+	startTime := time.Now()
+
+    result, err := fetchCotacao(cfg)
+	if err != nil {
+        log.Fatalf("Erro: %v", err)
+    }
+
+	saveResult(cfg, result)
+	if err != nil {
+        log.Fatalf("Erro: %v", err)
+    }
+
+    logExecutionTime(startTime)
+
+}
+
+func main() {
+	log.Println("Carregando configuração do sistema...")
+	cfg, err := loadConfig()
+	if err != nil {
+		log.Panicf("Erro no carregamento das configurações: %v", err)
+	}
+	log.Println("Sistema iniciado com sucesso!")
+
+	log.Println("Iniciando client HTTP...")
+
+	RunQuotesClient (cfg)
+
 }
