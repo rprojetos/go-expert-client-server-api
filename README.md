@@ -1,8 +1,11 @@
 # go-expert-client-server-api
 
 ## Servidor
-#### configuração:
-A configuração do servidor é realizada a partir de um arquivo yaml
+
+#### Configurações:
+
+As configurações do servidor é realizada a partir de um arquivo yaml.
+
 As configurações que podem ser realizadas, são:
 - quoteApiUrl -> endpoint da api externa para realizar a cotação do dollar.
 - timeQuoteApi -> tempo máximo em milisegundos que o sistema/servidor aguadará a resposta da API de Cotação
@@ -19,8 +22,8 @@ Então execute o comando no terminal:
 Então, o servidor será iniciado.
 
 ## Cliente
-#### configuração:
-A configuração do client é realizada a partir de um arquivo yaml
+#### Configurações:
+As configurações do client é realizada a partir de um arquivo yaml
 As configurações que podem ser realizadas, são:
 - url -> endpoint do servidor de cotação
   pathFileName: caminho/nome do arquivo txt, onde os dados serão salvos
