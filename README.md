@@ -4,7 +4,7 @@
 
 #### Configurações:
 
-As configurações do servidor é realizada a partir de um arquivo yaml.
+As configurações do servidor são realizadas a partir de um arquivo yaml.
 
 As configurações que podem ser realizadas, são:
 - quoteApiUrl -> endpoint da api externa para realizar a cotação do dollar.
@@ -23,7 +23,7 @@ Então, o servidor será iniciado.
 
 ## Cliente
 #### Configurações:
-As configurações do client é realizada a partir de um arquivo yaml
+As configurações do client são realizadas a partir de um arquivo yaml
 As configurações que podem ser realizadas, são:
 - url -> endpoint do servidor de cotação
   pathFileName: caminho/nome do arquivo txt, onde os dados serão salvos
