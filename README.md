@@ -1,10 +1,31 @@
 # go-expert-client-server-api
 
-## Comando uteis:
-- go work init
+## Servidor
+#### configuração:
+Essa configuração é realizada a partir de um arquivo yaml
+local no arquivo: [server/internal/config/config.yaml](https://github.com/rprojetos/go-expert-client-server-api/blob/main/server/internal/config/config.yaml)
+
+### Comando para iniciar o servidor:
+A partir do diretório raiz do repositório entrar no diretório server
+Então execute o comando no terminal:
+> ***go run ./cmd/server***
+
+Então, o servidor será iniciado.
+
+## Cliente
+#### configuração:
+Essa configuração é realizada a partir de um arquivo yaml
+local no arquivo: [client/internal/config/config.yaml](https://github.com/rprojetos/go-expert-client-server-api/blob/main/client/internal/config/config.yaml)
+
+### Comando para iniciar o servidor:
+A partir do diretório raiz do repositório entrar no diretório client
+Então execute o comando no terminal:
+> ***go run ./cmd/client***
+
+Então, o client realizará uma requisição de cotação do dollar para o server.
 
 
-## Desafio / Resumo da implementação:
+## Resumo do desafio implementado:
 Este desafio consiste no desenvolvimento de duas aplicações relativas a server/client
 Sendo o client responsavel por buscar no servidor a cotação atual do dolar salvando esta em um arquivo de texto.
 O servidor é responsável por buscar a cotação em uma api externa, persistindo a respctiva consulta em um bando de dados sqlite.
