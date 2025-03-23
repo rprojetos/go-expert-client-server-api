@@ -14,7 +14,6 @@ import (
 )
 
 func HandlerCotacaoDolar(w http.ResponseWriter, r *http.Request) {
-	// TODO deletar o startTime e o endTime
 	startTime := time.Now()
 
 	// Verifica se o método é POST
@@ -41,7 +40,7 @@ func HandlerCotacaoDolar(w http.ResponseWriter, r *http.Request) {
 
 		}
 		// Loga o erro, mas continua o processamento para retornar o bid
-		fmt.Printf("Erro ao salvar dados: %v\n", err)
+		log.Printf("Erro ao salvar dados: %v\n", err)
 	}
 
 	// Estrutura para parsear o JSON
@@ -66,5 +65,5 @@ func HandlerCotacaoDolar(w http.ResponseWriter, r *http.Request) {
 
 	endTime := time.Now()
 	elapsed := endTime.Sub(startTime)
-	fmt.Println("Tempo total de execução/resposta:", elapsed)
+	log.Println("Tempo total de execução/resposta:", elapsed)
 }

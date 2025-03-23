@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	"database/sql"
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -15,8 +15,8 @@ func createTableIfNotExistsCotacoes() error {
 	defer db.Close()
 
 	if tableExists(db, "cotacoes") {
-		fmt.Println("Ok!")
-		return nil // Sucesso
+		log.Println("Ok!")
+		return nil
 	}
 
 	// Criando a tabela se não existir
@@ -41,7 +41,7 @@ func createTableIfNotExistsCotacoes() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Criando a tabela cotacoes no banco de dados finance.db.")
+	log.Println("Criando a tabela cotacoes no banco de dados finance.db.")
 
 	// Aguarda até que a tabela esteja disponível (máx. 200ms)
 	maxWait := 200 * time.Millisecond
@@ -50,8 +50,8 @@ func createTableIfNotExistsCotacoes() error {
 
 	for {
 		if tableExists(db, "cotacoes") {
-			fmt.Println("Tabela criada com sucesso!")
-			return nil // Sucesso
+			log.Println("Tabela criada com sucesso!")
+			return nil
 		}
 
 		// Se ultrapassar o tempo máximo, retorna erro
@@ -73,7 +73,7 @@ func tableExists(db *sql.DB, tableName string) bool {
 }
 
 func ConfigSystem() error {
-	fmt.Println("Verificando e preparando o sistema...")
+	log.Println("Verificando e preparando o sistema...")
 	err := createTableIfNotExistsCotacoes()
 	if err != nil {
 		return err

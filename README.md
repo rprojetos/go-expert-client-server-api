@@ -73,4 +73,6 @@ O servidor é responsável por buscar a cotação em uma api externa, persistind
 
 ## Escopo do projeto:
 
-<img title="a title" alt="Alt text" src="/escopo/clienteServer.svg">
+<img title="escopo" alt="escopo do projeto" src="/escopo/clienteServer.svg">
+
+<img title="App Server / App Client" alt="App Server / App Client" src="/escopo/tela.png">

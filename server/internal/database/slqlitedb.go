@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/rprojetos/go-expert/internal/config"
@@ -80,13 +81,12 @@ func SaveDadosCotacao(dadosCotacao []byte) error {
 		resultado.USDBRL.CreateDate,
 	)
 	if err != nil {
-		fmt.Println("Erro ao inserir dados.")
+		log.Println("Erro ao inserir dados.")
 		return err
 	}
-
 	endTime := time.Now()
 	elapsed := endTime.Sub(startTime)
-	fmt.Println("Tempo de persistência no db:", elapsed)
+	log.Println("Tempo de persistência no db:", elapsed)
 
 	return nil
 }
