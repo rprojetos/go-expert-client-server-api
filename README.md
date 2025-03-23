@@ -2,8 +2,14 @@
 
 ## Servidor
 #### configuração:
-Essa configuração é realizada a partir de um arquivo yaml
-local no arquivo: [server/internal/config/config.yaml](https://github.com/rprojetos/go-expert-client-server-api/blob/main/server/internal/config/config.yaml)
+A configuração do servidor é realizada a partir de um arquivo yaml
+As configurações que podem ser realizadas, são:
+- quoteApiUrl -> endpoint da api externa para realizar a cotação do dollar.
+- timeQuoteApi -> tempo máximo em milisegundos que o sistema/servidor aguadará a resposta da API de Cotação
+- timeDbSqlite -> tempo máximo em milisegindos que o sistema/servidor aguardara para que os dados sejam persistidos no db sqlite financas.db
+
+Local do arquivo de configuração do servidor: 
+- [server/internal/config/config.yaml](https://github.com/rprojetos/go-expert-client-server-api/blob/main/server/internal/config/config.yaml)
 
 ### Comando para iniciar o servidor:
 A partir do diretório raiz do repositório entrar no diretório server
@@ -14,10 +20,16 @@ Então, o servidor será iniciado.
 
 ## Cliente
 #### configuração:
-Essa configuração é realizada a partir de um arquivo yaml
-local no arquivo: [client/internal/config/config.yaml](https://github.com/rprojetos/go-expert-client-server-api/blob/main/client/internal/config/config.yaml)
+A configuração do client é realizada a partir de um arquivo yaml
+As configurações que podem ser realizadas, são:
+- url -> endpoint do servidor de cotação
+  pathFileName: caminho/nome do arquivo txt, onde os dados serão salvos
+  timeResponseApi: Tempo máximo aceito para aguardar a resposta de uma requisição.
 
-### Comando para iniciar o servidor:
+Local do arquivo de configuração do client:
+- [client/internal/config/config.yaml](https://github.com/rprojetos/go-expert-client-server-api/blob/main/client/internal/config/config.yaml)
+
+### Comando para iniciar o client:
 A partir do diretório raiz do repositório entrar no diretório client
 Então execute o comando no terminal:
 > ***go run ./cmd/client***
