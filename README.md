@@ -22,14 +22,15 @@ Então execute o comando no terminal:
 Então, o servidor será iniciado.
 
 ## Cliente
+
 #### Configurações:
 
 As configurações do client são realizadas a partir de um arquivo yaml
 
 As configurações que podem ser realizadas, são:
 - url -> endpoint do servidor de cotação
-  pathFileName: caminho/nome do arquivo txt, onde os dados serão salvos
-  timeResponseApi: Tempo máximo aceito para aguardar a resposta de uma requisição.
+- pathFileName: caminho/nome do arquivo txt, onde os dados serão salvos
+- timeResponseApi: Tempo máximo aceito para aguardar a resposta de uma requisição.
 
 Local do arquivo de configuração do client:
 - [client/internal/config/config.yaml](https://github.com/rprojetos/go-expert-client-server-api/blob/main/client/internal/config/config.yaml)
